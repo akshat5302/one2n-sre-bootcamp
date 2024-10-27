@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 
 // test route
 app.get('/', (req, res, next) => {
-  res.send('Hello World');
+  res.send('Hello World using Gitops');
 });
 
 // Health route
