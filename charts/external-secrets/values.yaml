@@ -1,0 +1,12 @@
+external-secrets:
+  installCRDs: true
+  
+  global:
+    nodeSelector:
+      type: dependent_services
+    
+    tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "dependent_services"
+        effect: "NoSchedule"

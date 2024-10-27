@@ -1,0 +1,108 @@
+dockerRegistry:
+  enabled: false
+  registry: docker.io
+  loginid: akshat5302
+  password: ''
+
+ingress:
+  enabled: true
+  appHost: student-api.example.com
+  ingressClass: nginx
+  clientMaxBodySize: 5m
+
+
+api:
+  enabled: true
+  image:
+    repository: akshat5302/student-api
+    tag: latest
+  nodeSelector:
+    type: application
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "application"
+      effect: "NoSchedule"
+  replicaCount: 1
+  initContainer:
+    image:
+      repository: akshat5302/student-api
+      tag: latest
+
+postgres:
+  local_setup: true
+  image: postgres:15.7-alpine
+  servicePort: 5432
+  storageClass: standard
+  volumeSize: 1Gi
+  pullPolicy: IfNotPresent
+  assign_cluster_ip: false
+  nodeSelector:
+    type: database
+  tolerations: 
+    - key: "type"
+      operator: "Equal"
+      value: "database"
+      effect: "NoSchedule"
+  pgUser: postgres
+  pgPassword: postgres
+  pgDb: postgres
+
+ 
+externalSecret:
+  enabled: true
+  refreshInterval: "1h"
+  target:
+    name: "api-db-secrets"
+    creationPolicy: "Owner"
+  data:
+    - secretKey: "POSTGRES_USER"
+      remoteRef:
+        key: "kv/postgres-secret"
+        property: "POSTGRES_USER"
+    - secretKey: "POSTGRES_PASSWORD"
+      remoteRef:
+        key: "kv/postgres-secret"
+        property: "POSTGRES_PASSWORD"
+    - secretKey: "POSTGRES_DB"
+      remoteRef:
+        key: "kv/postgres-secret"
+        property: "POSTGRES_DB"
+    - secretKey: "DATABASE_URL"
+      remoteRef:
+        key: "kv/postgres-secret" 
+        property: "DATABASE_URL"
+
+vault_setup:
+  secretStore:
+    name: vault-backend
+  server: "http://vault-setup.vault.svc.cluster.local:8200"
+  path: "kv"
+  version: "v2"
+  auth:
+    tokenSecretRef:
+      name: "vault-token-secret"
+      key: "vault-token"
+
+
+# grafana:
+#   enabled: true
+
+prometheus:
+  enabled: true
+  nodeSelector:
+    type: application
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "application"
+      effect: "NoSchedule"
+  postgresExporter:
+    enabled: true
+
+# blackbox-exporter:
+#   enabled: true
+
+
+
+      

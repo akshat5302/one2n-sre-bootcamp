@@ -1,0 +1,47 @@
+prometheus:
+  enabled: true
+  nodeSelector:
+    type: dependent_services
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "dependent_services"
+      effect: "NoSchedule"
+  postgresExporter:
+    enabled: true
+
+grafana:
+  enabled: true
+  nodeSelector:
+    type: dependent_services
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "dependent_services" 
+      effect: "NoSchedule"
+  adminPassword: admin
+  service:
+    type: ClusterIP
+    port: 80
+    nodePort: 30001
+  ingress:
+    enabled: true
+    path: /
+    hosts:
+      - grafana.example.com
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Forwarded-Port $server_port;
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.example.com 
+

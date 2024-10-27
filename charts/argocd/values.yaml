@@ -1,0 +1,18 @@
+argo-cd:
+  global:
+    nodeSelector:
+      type: dependent_services
+    tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "dependent_services"
+        effect: "NoSchedule"
+  dex:
+    enabled: false
+  notifications:
+    enabled: false
+  applicationSet:
+    enabled: false
+  server:
+    extraArgs:
+      - --insecure

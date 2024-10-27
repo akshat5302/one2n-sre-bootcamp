@@ -1,0 +1,80 @@
+{{- if .Values.postgres.local_setup }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-api-db
+  labels:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-api-db
+spec:
+  clusterIP: None
+  ports:
+  - name: api-db-5432
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-api-db
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-api-db-wl
+spec:
+  selector:
+    matchLabels:
+      app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-api-db
+  serviceName:  {{ .Release.Name }}-api-db
+  template:
+    metadata:
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-api-db
+    spec:
+      {{- with .Values.postgres.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgres.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - image: {{ .Values.postgres.image }}
+        imagePullPolicy: Always
+        name: {{ .Release.Name }}-api-db
+        stdin: true
+        tty: true
+        env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/crud-api-db
+        envFrom:
+          - secretRef:
+              name: {{ .Release.Name }}-api-db-secrets 
+              optional: false
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pvc-{{ .Release.Name }}-api-db-vol
+          subPath: ''
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      namespace: {{ .Release.Namespace }}
+      name: pvc-{{ .Release.Name }}-api-db-vol
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.postgres.volumeSize | default "1Gi" | quote }}
+      storageClassName: {{ .Values.postgres.storageClass | default "" | quote }}
+      volumeMode: Filesystem
+---
+{{- end }}
+

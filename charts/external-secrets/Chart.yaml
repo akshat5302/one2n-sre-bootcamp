@@ -1,0 +1,8 @@
+apiVersion: v2
+name: eso-setup
+description: External Secrets Operator installation
+version: 0.1.0
+dependencies:
+  - name: external-secrets
+    version: "0.10.4"
+    repository: "https://charts.external-secrets.io"

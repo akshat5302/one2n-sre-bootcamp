@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-api-config
+  namespace: {{ .Release.Namespace }}
+data:
+    {{- if .Values.postgres.local_setup }}
+    POSTGRES_HOST: {{ .Release.Name }}-api-db
+    POSTGRES_DB: {{ .Values.postgres.pgDb | quote }}
+    POSTGRES_USER: {{ .Values.postgres.pgUser | quote}}
+    {{- end }}
+---
+{{- if and .Values.postgres.local_setup .Values.api.enabled (not .Values.externalSecret.enabled) }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-api-db-secrets 
+  namespace: {{ .Release.Namespace }}
+stringData:
+    POSTGRES_PASSWORD: {{ .Values.postgres.pgPassword | quote}}
+{{- end }}
+

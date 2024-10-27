@@ -1,0 +1,78 @@
+{{- if .Values.api.enabled }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-api
+spec:
+  selector:
+    app: {{ .Release.Name }}-api
+  ports:
+  - name: api-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-api
+  labels:
+    app: {{ .Release.Name }}-api
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-api
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-api
+      annotations:
+        timestamp: {{ now | quote }}
+    spec:
+      {{- with .Values.api.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.api.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: db-migrate
+        image: {{ .Values.api.initContainer.image.repository }}:{{ .Values.api.initContainer.image.tag }}
+        command: 
+        - /bin/sh
+        - -c
+        - ./migrate.sh
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-api-config
+          - secretRef:
+              name: {{ .Release.Name }}-api-db-secrets
+      containers:
+      - name: api
+        image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-api-config
+        {{- if .Values.externalSecret.enabled }}
+          - secretRef:
+              name: {{ .Values.externalSecret.target.name }}
+        {{- else }}
+          - secretRef:
+              name: {{ .Release.Name }}-api-db-secrets
+        {{- end }}
+      serviceAccount: {{ .Release.Name }}-srv-account
+      serviceAccountName: {{ .Release.Name }}-srv-account
+
+---
+
+{{- end }}

@@ -1,0 +1,69 @@
+name: Application Deployment Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'  # Assuming your application code is in src directory
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: student-crud-api
+  HELM_VALUES_PATH: charts/crud-api/values.yaml
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Generate Tag
+        id: tag
+        run: |
+          # Generate tag using timestamp and short commit SHA
+          TAG=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+      
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      
+      - name: Build and Push Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            akshat5302/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+            akshat5302/${{ env.IMAGE_NAME }}:latest
+
+
+  update-helm-values:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TOKEN_GITHUB }}
+      
+      - name: Update Application Image Tag
+        run: |
+          TAG=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)
+          yq e -i '.image.repository = "akshat5302/${{ env.IMAGE_NAME }}"' ${{ env.HELM_VALUES_PATH }}
+          yq e -i '.image.tag = "'${TAG}'"' ${{ env.HELM_VALUES_PATH }}
+      
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+      
+      - name: Commit and Push Changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            git add ${{ env.HELM_VALUES_PATH }}
+            git commit -m "chore: update application image tag to ${TAG}"
+            git push
+          fi

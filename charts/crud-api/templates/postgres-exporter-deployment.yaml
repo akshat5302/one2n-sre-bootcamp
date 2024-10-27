@@ -1,0 +1,72 @@
+{{- if and .Values.postgres.local_setup .Values.prometheus.postgresExporter.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-exporter
+spec:
+  ports:
+    - name: postgres-exporter-9187
+      port: 9187
+      protocol: TCP
+      targetPort: 9187
+  selector:
+    app: postgres-exporter
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-exporter-config
+data:
+  queries.yaml: |
+    pg_stat_activity:
+      query: "SELECT * FROM pg_stat_activity;"
+      metrics:
+        - usage: "LABEL"
+          description: "Name of the user connected to the database"
+          key: "username"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-exporter
+spec:
+  {{- with .Values.prometheus.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.prometheus.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-exporter
+  template:
+    metadata:
+      labels:
+        app: postgres-exporter
+    spec:
+      containers:
+        - name: postgres-exporter
+          image: wrouesnel/postgres_exporter
+          args:
+            - "--extend.query-path=/etc/postgres_exporter/queries.yaml"
+          envFrom:
+          {{- if .Values.externalSecret.enabled }}
+            - secretRef:
+                name: {{ .Values.externalSecret.target.name }}
+          {{- else }}
+            - secretRef:
+                name: {{ .Release.Name }}-api-db-secrets
+          {{- end }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/postgres_exporter
+      volumes:
+        - name: config-volume
+          configMap:
+            name: postgres-exporter-config
+{{- end }}
