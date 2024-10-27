@@ -12,7 +12,7 @@ api:
   enabled: true
   image:
     repository: akshat5302/student-crud-api
-    tag: 20241027-33994e4
+    tag: 20241027-1b05ae6
   nodeSelector:
     type: application
   tolerations:
