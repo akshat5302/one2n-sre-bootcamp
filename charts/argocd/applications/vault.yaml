@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/your-repo.git
+    repoURL: https://github.com/akshat5302/one2n-sre-bootcamp.git
     targetRevision: HEAD
-    path: helm-charts/vault
+    path: charts/vault
     helm:
       valueFiles:
         - values.yaml

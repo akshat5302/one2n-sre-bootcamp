@@ -78,16 +78,16 @@ vault_setup:
       key: "vault-token"
 # grafana:
 #   enabled: true
-prometheus:
-  enabled: true
-  nodeSelector:
-    type: application
-  tolerations:
-    - key: "type"
-      operator: "Equal"
-      value: "application"
-      effect: "NoSchedule"
-  postgresExporter:
-    enabled: true
+# prometheus:
+#   enabled: true
+#   nodeSelector:
+#     type: application
+#   tolerations:
+#     - key: "type"
+#       operator: "Equal"
+#       value: "application"
+#       effect: "NoSchedule"
+#   postgresExporter:
+#     enabled: true
 # blackbox-exporter:
 #   enabled: true

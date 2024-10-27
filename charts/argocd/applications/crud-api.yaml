@@ -6,15 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/your-repo.git
+    repoURL: https://github.com/akshat5302/one2n-sre-bootcamp.git
     targetRevision: HEAD
-    path: helm-charts/my-application
+    path: charts/crud-api
     helm:
       valueFiles:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: my-application
+    namespace: student-api
   syncPolicy:
     automated:
       prune: true
