@@ -54,8 +54,13 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Release.Name }}-api-config
+        {{- if .Values.externalSecret.enabled }}
+          - secretRef:
+              name: {{ .Values.externalSecret.target.name }}
+        {{- else }}
           - secretRef:
               name: {{ .Release.Name }}-api-db-secrets
+        {{- end }}
       containers:
       - name: api
         image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
