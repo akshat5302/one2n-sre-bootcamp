@@ -52,8 +52,8 @@ jobs:
       - name: Update Application Image Tag
         run: |
           TAG=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)
-          yq e -i '.image.repository = "akshat5302/${{ env.IMAGE_NAME }}"' ${{ env.HELM_VALUES_PATH }}
-          yq e -i '.image.tag = "'${TAG}'"' ${{ env.HELM_VALUES_PATH }}
+          yq e -i '.api.image.repository = "akshat5302/${{ env.IMAGE_NAME }}"' ${{ env.HELM_VALUES_PATH }}
+          yq e -i '.api.image.tag = "'${TAG}'"' ${{ env.HELM_VALUES_PATH }}
       
       - name: Configure Git
         run: |
