@@ -89,8 +89,5 @@ prometheus:
       effect: "NoSchedule"
   postgresExporter:
     enabled: true
-image:
-  repository: akshat5302/student-crud-api
-  tag: 20241027-481baa2
 # blackbox-exporter:
 #   enabled: true

@@ -62,6 +62,7 @@ jobs:
       
       - name: Commit and Push Changes
         run: |
+          git pull --rebase origin main
           if [[ -n $(git status -s) ]]; then
             git add ${{ env.HELM_VALUES_PATH }}
             git commit -m "chore: update application image tag to ${TAG}"
