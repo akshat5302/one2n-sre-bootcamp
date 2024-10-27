@@ -11,8 +11,8 @@ ingress:
 api:
   enabled: true
   image:
-    repository: akshat5302/student-api
-    tag: latest
+    repository: akshat5302/student-crud-api
+    tag: 20241027-33994e4
   nodeSelector:
     type: application
   tolerations:
