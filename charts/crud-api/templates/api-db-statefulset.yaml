@@ -51,9 +51,13 @@ spec:
           - name: PGDATA
             value: /var/lib/postgresql/data/crud-api-db
         envFrom:
+        {{- if .Values.externalSecret.enabled }}
           - secretRef:
-              name: {{ .Release.Name }}-api-db-secrets 
-              optional: false
+              name: {{ .Values.externalSecret.target.name }}
+        {{- else }}
+          - secretRef:
+              name: {{ .Release.Name }}-api-db-secrets
+        {{- end }}
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: pvc-{{ .Release.Name }}-api-db-vol
