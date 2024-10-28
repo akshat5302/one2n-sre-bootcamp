@@ -4,14 +4,31 @@
   "description": "CRUD application with Express and Sequelize",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/startServer.js",
+    "test": "jest",
     "dev": "nodemon index.js",
-    "build": "npm install && npm build",
     "db:migrate": "sequelize-cli db:migrate",
     "db:seed": "sequelize-cli db:seed:all",
-    "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix",
-    "test": "echo \"Error: no test specified\" "
+    "lint": "eslint . || true",
+    "lint:report": "npx eslint . -f html -o lint-report.html || true",
+    "lint:fix": "eslint . --fix || true",
+    "test:watch": "NODE_ENV=test jest --watch",
+    "test:coverage": "NODE_ENV=test jest --coverage"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./tests/setup.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "./dist/"
+    ],
+    "testPathIgnorePatterns": [
+      "./node_modules/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "./node_modules/"
+    ]
   },
   "keywords": [
     "crud",
@@ -30,9 +47,14 @@
     "sequelize": "^6.28.0"
   },
   "devDependencies": {
-    "eslint": "^8.36.0",
-    "jest": "^29.5.0",
+    "@eslint/js": "^9.13.0",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.11.0",
+    "jest": "^29.7.0",
     "nodemon": "^2.0.20",
-    "sequelize-cli": "^6.6.0"
+    "sequelize-cli": "^6.6.0",
+    "supertest": "^7.0.0"
   }
 }

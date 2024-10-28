@@ -14,19 +14,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// test route
 app.get('/', (req, res, next) => {
   res.send('Hello World using Gitops and ArgoCD with Argo Workflows');
 });
 
-// Health route
-
 app.use('/api/v1/health', require('./api/v1/routes/healthroute'));
-
-// CRUD routes
 app.use('/api/v1/students', require('./api/v1/routes/studentsroute'));
 
-// error handling
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
@@ -34,11 +28,18 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message });
 });
 
-// sync database
-sequelize
-  .sync()
-  .then((result) => {
-    console.log('Database connected');
-    app.listen(3000);
-  })
-  .catch((err) => console.log(err));
+// Export the app for testing
+module.exports = app;
+
+// Only start the server if this file is run directly
+if (require.main === module) {
+  sequelize
+    .sync()
+    .then((result) => {
+      console.log('Database connected');
+      app.listen(3000, () => {
+        console.log('Server is running on port 3000');
+      });
+    })
+    .catch((err) => console.log(err));
+}

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  test-and-lint:
+    runs-on: self-hosted
+    
+    services:
+      postgres:
+        image: postgres:15.7-alpine
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        
+    - name: Install dependencies
+      run: npm ci
+        
+    - name: Run tests
+      run: npm test
+      continue-on-error: true
+      
+    - name: Generate lint report
+      run: npm run lint:report
+      continue-on-error: true
+      
+    - uses: actions/upload-artifact@v3
+      with:
+        name: lint-report
+        path: lint-report.html
