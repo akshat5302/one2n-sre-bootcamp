@@ -1,13 +1,19 @@
 apiVersion: v2
-name: prometheus-setup
-description: Prometheus installation and configuration
+name: monitoring
+description: A Helm chart for loki, prometheus, grafana, promtail, blackbox exporter
 version: 0.1.0
 dependencies:
-  - name: prometheus
-    version: "0.50.2"
+  - name: kube-prometheus-stack
+    version: "65.7.0"
     repository: "https://prometheus-community.github.io/helm-charts"
-    condition: prometheus.enabled
-  - name: grafana
-    version: "0.50.2"
+    condition: kube-prometheus-stack.enabled
+
+  - name: loki-stack
+    version: "*"
     repository: "https://grafana.github.io/helm-charts"
-    condition: grafana.enabled
+    condition: loki.enabled
+
+  - name: prometheus-blackbox-exporter
+    version: "9.0.1"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    condition: blackbox-exporter.enabled

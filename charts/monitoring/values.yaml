@@ -1,47 +1,117 @@
-prometheus:
-  enabled: true
-  nodeSelector:
-    type: dependent_services
-  tolerations:
-    - key: "type"
-      operator: "Equal"
-      value: "dependent_services"
-      effect: "NoSchedule"
-  postgresExporter:
+loki-stack:
+  loki:
     enabled: true
+    nodeSelector: 
+      type: dependent_services
+    tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "dependent_services" 
+        effect: "NoSchedule"
+    image: 
+      tag: 2.9.3
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: http-metrics
+      initialDelaySeconds: 45
+    livenessProbe:
+      httpGet:
+        path: /ready
+        port: http-metrics
+      initialDelaySeconds: 45
+    datasource:
+      jsonData: "{}"  
+      uid: ""
+  grafana:
+    enabled: false
 
-grafana:
+  promtail:
+    enabled: true 
+    tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "dependent_services" 
+        effect: "NoSchedule"
+      - key: "type"
+        operator: "Equal"
+        value: "application"
+        effect: "NoSchedule"
+      - key: "type"
+        operator: "Equal"
+        value: "database"
+        effect: "NoSchedule"
+    config:
+      logLevel: info
+      serverPort: 3101
+      clients:
+        - url: http://observability-loki:3100/loki/api/v1/push
+
+kube-prometheus-stack:
   enabled: true
-  nodeSelector:
+  alertmanager:
+    enabled: true
+    alertmanagerSpec:
+      nodeSelector: 
+        type: dependent_services
+      tolerations:
+        - key: "type"
+          operator: "Equal"
+          value: "dependent_services" 
+          effect: "NoSchedule"
+
+  grafana:
+    enabled: true
+    nodeSelector: 
+      type: dependent_services
+    tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "dependent_services" 
+        effect: "NoSchedule"
+
+  prometheusOperator:
+    enabled: true
+    nodeSelector: 
+      type: dependent_services
+    tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "dependent_services" 
+        effect: "NoSchedule"
+
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      tolerations: 
+        - key: "type"
+          operator: "Equal"
+          value: "dependent_services" 
+          effect: "NoSchedule"  
+      nodeSelector:
+        type: dependent_services
+      additionalScrapeConfigs:
+        - job_name: 'static-monitor'
+          metrics_path: /probe
+          params:
+            module: [http_2xx]  # Look for a HTTP 200 response.
+          static_configs:
+            - targets:
+              - http://student-api.example.com/api/v1/health
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "observability-prometheus-blackbox-exporter:9115"  # Blackbox exporter's address
+
+prometheus-blackbox-exporter:
+  enabled: true
+  nodeSelector: 
     type: dependent_services
   tolerations:
     - key: "type"
       operator: "Equal"
       value: "dependent_services" 
       effect: "NoSchedule"
-  adminPassword: admin
-  service:
-    type: ClusterIP
-    port: 80
-    nodePort: 30001
-  ingress:
-    enabled: true
-    path: /
-    hosts:
-      - grafana.example.com
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/configuration-snippet: |
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_host;
-        proxy_set_header X-Forwarded-Port $server_port;
-    tls:
-      - secretName: grafana-tls
-        hosts:
-          - grafana.example.com 
-

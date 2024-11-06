@@ -3,11 +3,13 @@ dockerRegistry:
   registry: docker.io
   loginid: akshat5302
   password: ''
+
 ingress:
   enabled: true
   appHost: student-api.example.com
   ingressClass: nginx
   clientMaxBodySize: 5m
+
 api:
   enabled: true
   image:
@@ -25,6 +27,7 @@ api:
     image:
       repository: akshat5302/student-api
       tag: latest
+
 postgres:
   local_setup: true
   image: postgres:15.7-alpine
@@ -43,6 +46,7 @@ postgres:
   pgUser: postgres
   pgPassword: postgres
   pgDb: postgres
+
 externalSecret:
   enabled: true
   refreshInterval: "1h"
@@ -66,6 +70,7 @@ externalSecret:
       remoteRef:
         key: "kv/postgres-secret"
         property: "DATABASE_URL"
+
 vault_setup:
   secretStore:
     name: vault-backend
@@ -76,18 +81,13 @@ vault_setup:
     tokenSecretRef:
       name: "vault-token-secret"
       key: "vault-token"
-# grafana:
-#   enabled: true
-# prometheus:
-#   enabled: true
-#   nodeSelector:
-#     type: application
-#   tolerations:
-#     - key: "type"
-#       operator: "Equal"
-#       value: "application"
-#       effect: "NoSchedule"
-#   postgresExporter:
-#     enabled: true
-# blackbox-exporter:
-#   enabled: true
+
+postgresExporter:
+  enabled: true 
+  nodeSelector:
+    type: application
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "application"  
+      effect: "NoSchedule"
