@@ -14,7 +14,7 @@ api:
   enabled: true
   image:
     repository: akshat5302/student-crud-api
-    tag: 20241028-3c5fa0c
+    tag: 20241028-937965e
   nodeSelector:
     type: application
   tolerations:
