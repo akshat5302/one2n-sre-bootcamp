@@ -1,5 +1,5 @@
 # Variables
-DB_CONTAINER_NAME=student-db
+DB_CONTAINER_NAME=node_db
 DB_IMAGE=postgres:15.7-alpine
 API_IMAGE_NAME=student-api
 API_CONTAINER_NAME=student-api-container
@@ -31,7 +31,7 @@ build-api:
 run-migrations: build-api
 	docker run --rm \
 		-v $(PWD)/src:/app/src \
-		-e POSTGRES_HOST=192.168.68.157 \
+		-e POSTGRES_HOST=192.168.1.7 \
 		-e POSTGRES_DB=student_db \
 		-e POSTGRES_USER=akshat \
 		-e POSTGRES_PASSWORD=12345 \

@@ -105,6 +105,17 @@ kube-prometheus-stack:
               target_label: instance
             - target_label: __address__
               replacement: "observability-prometheus-blackbox-exporter:9115"  # Blackbox exporter's address
+        - job_name: 'app-metrics'
+          metrics_path: /metrics
+          scrape_interval: 15s
+          static_configs:
+            - targets:
+              - 'student-api.example.com'  # Replace with your actual service hostname
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: instance
+            - target_label: application
+              replacement: 'student-api'
 
 prometheus-blackbox-exporter:
   enabled: true
