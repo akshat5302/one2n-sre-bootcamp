@@ -1,8 +1,3 @@
-dockerRegistry:
-  enabled: false
-  registry: docker.io
-  loginid: akshat5302
-  password: ''
 ingress:
   enabled: true
   appHost: student-api.example.com
@@ -23,8 +18,8 @@ api:
   replicaCount: 1
   initContainer:
     image:
-      repository: akshat5302/student-api
-      tag: latest
+      repository: akshat5302/student-crud-api
+      tag: 20241110-6ceba5b
 postgres:
   local_setup: true
   image: postgres:15.7-alpine
@@ -76,12 +71,4 @@ vault_setup:
     tokenSecretRef:
       name: "vault-token-secret"
       key: "vault-token"
-postgresExporter:
-  enabled: true
-  nodeSelector:
-    type: application
-  tolerations:
-    - key: "type"
-      operator: "Equal"
-      value: "application"
-      effect: "NoSchedule"
+
