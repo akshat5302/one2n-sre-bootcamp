@@ -3,18 +3,16 @@ dockerRegistry:
   registry: docker.io
   loginid: akshat5302
   password: ''
-
 ingress:
   enabled: true
   appHost: student-api.example.com
   ingressClass: nginx
   clientMaxBodySize: 5m
-
 api:
   enabled: true
   image:
     repository: akshat5302/student-crud-api
-    tag: 20241028-937965e
+    tag: 20241110-6ceba5b
   nodeSelector:
     type: application
   tolerations:
@@ -27,7 +25,6 @@ api:
     image:
       repository: akshat5302/student-api
       tag: latest
-
 postgres:
   local_setup: true
   image: postgres:15.7-alpine
@@ -46,7 +43,6 @@ postgres:
   pgUser: postgres
   pgPassword: postgres
   pgDb: postgres
-
 externalSecret:
   enabled: true
   refreshInterval: "1h"
@@ -70,7 +66,6 @@ externalSecret:
       remoteRef:
         key: "kv/postgres-secret"
         property: "DATABASE_URL"
-
 vault_setup:
   secretStore:
     name: vault-backend
@@ -81,13 +76,12 @@ vault_setup:
     tokenSecretRef:
       name: "vault-token-secret"
       key: "vault-token"
-
 postgresExporter:
-  enabled: true 
+  enabled: true
   nodeSelector:
     type: application
   tolerations:
     - key: "type"
       operator: "Equal"
-      value: "application"  
+      value: "application"
       effect: "NoSchedule"
