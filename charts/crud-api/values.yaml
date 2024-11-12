@@ -1,3 +1,8 @@
+dockerRegistry:
+  enabled: false
+  registry: docker.io
+  loginid: akshat5302
+  password: ''
 ingress:
   enabled: true
   appHost: student-api.example.com

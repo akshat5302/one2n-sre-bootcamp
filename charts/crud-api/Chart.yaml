@@ -2,36 +2,3 @@ apiVersion: v2
 name: crud-api
 description: A Helm chart for OpenTelemetry, Grafana, Prometheus, and Prometheus Blackbox Exporter
 version: 1.0.0
-# dependencies:
-  # - name: vault
-  #   version: "*"
-  #   repository: "https://helm.releases.hashicorp.com"
-  #   condition: vault.enabled
-  # - name: external-secrets
-  #   version: "*"
-  #   repository: "https://charts.external-secrets.io"
-  #   condition: external-secrets.enabled
-  # - name: argo
-  #   version: "*"
-  #   repository: "https://argoproj.github.io/argo-helm"
-  #   condition: argo.enabled
-  # - name: prometheus
-  #   version: "*"
-  #   repository: "https://prometheus-community.github.io/helm-charts"
-  #   condition: prometheus.enabled
-  # - name: grafana
-  #   version: "*"
-  #   repository: "https://grafana.github.io/helm-charts"
-  #   condition: grafana.enabled
-  # - name: tempo
-  #   version: "*"
-  #   repository: "https://grafana.github.io/helm-charts"
-  #   condition: tempo.enabled
-  # - name: opentelemetry-collector
-  #   version: "*"
-  #   repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"
-  #   condition: opentelemetry-collector.enabled
-  # - name: prometheus-blackbox-exporter
-  #   version: "*"
-  #   repository: "https://prometheus-community.github.io/helm-charts"
-  #   condition: blackbox-exporter.enabled

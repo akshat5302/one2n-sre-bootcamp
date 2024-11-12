@@ -125,6 +125,20 @@ Access at: `http://localhost:3100`
 - Pre-configured alerts for Kubernetes components
 - Can be viewed in AlertManager UI
 
+## Dashboards and Alerts Screenshots
+
+**DB metrics dashboard:**
+![DB Metrics Dashboard](../../assets/db_dashboard.png)
+
+**Node Metrics Dashboard:**
+![Node Metrics Dashboard](../../assets/nodes_dashboard.png)
+
+**Blackbox metrics dashboard:**
+![Blackbox Metrics Dashboard](../../assets/blackbox_dashboard.png)
+
+**Kube-state metrics dashboard:**
+![Kube-state Metrics Dashboard](../../assets/kube-state-metrics-dashboard.png)
+
 ## Verification
 
 Verify the installation by checking the pod status:

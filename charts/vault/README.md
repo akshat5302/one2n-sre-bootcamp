@@ -6,7 +6,7 @@ Quick guide for setting up HashiCorp Vault in Kubernetes using Helm.
 
 1. Install Vault using Helm:
 ```bash
-helm upgrade --install vault-setup charts/vault-0.28.1.tgz -n vault --create-namespace
+helm upgrade --install vault-setup charts/vault --namespace vault --create-namespace
 ```
 
 2. Initialize Vault to generate keys:
@@ -35,6 +35,41 @@ After initialization, Vault generates unseal keys and root token. **Keep these s
 - Access the UI at `localhost:8200`
 - Navigate to Secrets Engines section
 - Manage different types of secrets
+
+## Secrets Management
+### Create the kv secrets engine
+
+After the Vault setup is complete, you can create the `postgres-secret` using the Vault CLI or the Vault UI.
+
+Using the Vault CLI:
+```bash
+# Enable the kv secrets engine
+kubectl exec vault-setup-0 -n vault -- vault secrets enable kv
+
+### Write the postgres-secret
+kubectl exec vault-setup-0 -n vault -- vault kv put kv/postgres-secret \
+    DATABASE_URL=<your-database-url> \
+    POSTGRES_DB=<your-postgres-db> \
+    POSTGRES_USER=<your-postgres-user> \
+    POSTGRES_PASSWORD=<your-postgres-password>
+```
+
+Using the Vault UI:
+
+Access the Vault UI at localhost:8200.
+In the Secrets Engines section, enable a new KV secrets engine.
+
+![Vault UI - Secrets Engines](../../assets/vault-ui-secrets-engine.png)
+
+Navigate to the KV secrets engine and create a new secret called postgres-secret.
+Add the following keys and their respective values:
+
+* DATABASE_URL
+* POSTGRES_DB
+* POSTGRES_USER
+* POSTGRES_PASSWORD
+
+![Vault UI - Secrets Engines](../../assets/vault-ui-secrets.png)
 
 ## Security Notes
 

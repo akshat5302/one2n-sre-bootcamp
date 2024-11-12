@@ -19,6 +19,8 @@ This Helm chart deploys a Student CRUD API application with PostgreSQL database 
 First, you need to create a Kubernetes secret containing the Vault token. This token should be generated during the Vault initialization process using the `vault operator init` command as described in the [vault-setup documentation](https://github.com/akshat5302/one2n-sre-bootcamp/blob/main/charts/vault/README.md#installation).
 
 ```bash
+kubectl create namespace student-api
+
 kubectl create secret generic vault-token-secret \
   --from-literal=vault-token=<your-vault-token> \
   -n student-api

@@ -1,55 +1,56 @@
-vault: 
-  global:
-    namespace: vault
-    
-  injector:
-    nodeSelector:
-      type: dependent_services
-    tolerations:
-      - key: "type"
-        operator: "Equal"
-        value: "dependent_services" 
-        effect: "NoSchedule"
-  server:
-    nodeSelector:
-      type: dependent_services
-    tolerations:
-      - key: "type"
-        operator: "Equal"
-        value: "dependent_services"
-        effect: "NoSchedule"
-    standalone:
-      config: |
-        ui = true
-        listener "tcp" {
-          tls_disable = 1
-          address = "[::]:8200"
-          cluster_address = "[::]:8201"
-        }
-        storage "file" {
-          path = "/vault/data"
-        }
-    extraEnvironmentVars:
-      VAULT_ADDR: "http://127.0.0.1:8200"
-      VAULT_API_ADDR: "http://$(POD_IP):8200"
-    
-    postStart:
-      - /bin/sh
-      - -c
-      - |
-        sleep 5
-        vault secrets enable -version=2 kv
-        vault policy write kv-readwrite - <<EOT
-        path "kv/*" {
-          capabilities = ["create", "read", "update", "delete", "list"]
-        }
-        path "kv/data/*" {
-          capabilities = ["create", "read", "update", "delete", "list"]
-        }
-        path "kv/metadata/*" {
-          capabilities = ["list", "read", "delete"]
-        }
-        EOT
-        vault token create -policy=external-secrets -format=json > /vault/data/eso-token.json
-  ui:
+global:
+  namespace: vault
+  
+injector:
+  nodeSelector:
+    type: dependent_services
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "dependent_services" 
+      effect: "NoSchedule"
+server:
+  nodeSelector:
+    type: dependent_services
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "dependent_services"
+      effect: "NoSchedule"
+  dev:
     enabled: true
+  standalone:
+    config: |
+      ui = true
+      listener "tcp" {
+        tls_disable = 1
+        address = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
+      storage "file" {
+        path = "/vault/data"
+      }
+  extraEnvironmentVars:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_API_ADDR: "http://$(POD_IP):8200"
+  
+  postStart:
+    - /bin/sh
+    - -c
+    - |
+      sleep 5
+      vault secrets enable -version=2 kv
+      vault policy write kv-readwrite - <<EOT
+      path "kv/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+      path "kv/data/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+      path "kv/metadata/*" {
+        capabilities = ["list", "read", "delete"]
+      }
+      EOT
+      vault token create -policy=external-secrets -format=json > /vault/data/eso-token.json
+ui:
+  enabled: true
