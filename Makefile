@@ -17,11 +17,9 @@ lint-fix:
 # Start DB container
 start-db:
 	docker run --name $(DB_CONTAINER_NAME) \
-		-e POSTGRES_DB=student_db \
-		-e POSTGRES_USER=akshat \
-		-e POSTGRES_PASSWORD=12345 \
-		-p 5432:5432 \
-		-d postgres:15.7-alpine
+    --env-file .env \
+    -p 5432:5432 \
+    -d postgres:15.7-alpine
 
 # Build REST API docker image
 build-api:
@@ -30,23 +28,18 @@ build-api:
 # Run DB migrations
 run-migrations: build-api
 	docker run --rm \
-		-v $(PWD)/src:/app/src \
-		-e POSTGRES_HOST=192.168.1.7 \
-		-e POSTGRES_DB=student_db \
-		-e POSTGRES_USER=akshat \
-		-e POSTGRES_PASSWORD=12345 \
-		$(API_IMAGE_NAME) \
-		npx sequelize-cli db:migrate
+    -v $(PWD)/src:/app/src \
+    --env-file .env \
+    $(API_IMAGE_NAME) \
+    npx sequelize-cli db:migrate
+
 
 # Run REST API docker container
 run-api: run-migrations
 	docker run --name $(API_CONTAINER_NAME) \
-		-e POSTGRES_HOST=192.168.68.157 \
-		-e POSTGRES_DB=student_db \
-		-e POSTGRES_USER=akshat \
-		-e POSTGRES_PASSWORD=12345 \
-		-p 3000:3000 \
-		-d $(API_IMAGE_NAME)
+    --env-file .env \
+    -p 3000:3000 \
+    -d $(API_IMAGE_NAME)
 
 # Stop and remove containers
 clean:

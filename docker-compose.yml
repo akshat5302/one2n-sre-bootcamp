@@ -5,11 +5,8 @@ services:
     build: .
     ports:
       - "3000:3000"
-    environment:
-      - PG_DB=student_db
-      - PG_USER=akshat
-      - PG_PASSWORD=12345
-      - PG_HOST=node_db
+    env_file:
+      - .env
     restart: always
     depends_on:
       - node_db
@@ -31,10 +28,8 @@ services:
     image: postgres:15.7-alpine
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_DB=student_db
-      - POSTGRES_USER=akshat
-      - POSTGRES_PASSWORD=12345
+    env_file:
+      - .env
     volumes:
       - node_db_data:/var/lib/postgresql/data
  
@@ -44,9 +39,8 @@ services:
       restart: always
       ports:
         - "8888:80"
-      environment:
-        - PGADMIN_DEFAULT_EMAIL=akshat@pgadmin.com
-        - PGADMIN_DEFAULT_PASSWORD=akshat123
+      env_file:
+        - .env
       volumes:
         - pgadmin-data:/var/lib/pgadmin
 

@@ -41,7 +41,14 @@ Declarative continuous delivery tool for Kubernetes that follows the GitOps meth
 git clone https://github.com/akshat5302/one2n-sre-bootcamp.git
 ```
 
-2. Start the application:
+2. Setup the environment variables:
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+3. Start the application:
 ```bash
 docker compose up -d
 ```
