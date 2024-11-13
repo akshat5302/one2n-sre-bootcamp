@@ -127,4 +127,6 @@ This project is actively maintained and regularly updated. For the latest change
 
 ~3. Add an observability stack for Alerting and Logging~
    
-4. Update README.md
+~4. Update README.md~
+
+5. Create a Helm Chart Release Pipeline

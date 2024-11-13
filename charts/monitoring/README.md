@@ -127,6 +127,8 @@ Access at: `http://localhost:3100`
 
 ## Dashboards and Alerts Screenshots
 
+### Dashboards
+
 **DB metrics dashboard:**
 ![DB Metrics Dashboard](../../assets/db_dashboard.png)
 
@@ -138,6 +140,32 @@ Access at: `http://localhost:3100`
 
 **Kube-state metrics dashboard:**
 ![Kube-state Metrics Dashboard](../../assets/kube-state-metrics-dashboard.png)
+
+### Alerts
+
+**Memory usage alert:**
+![Memory Usage Alert](../../assets/memory_usage_alert.png)
+
+**CPU usage alert:**
+![CPU Usage Alert](../../assets/cpu_usage_alert.png)
+
+**Disk usage alert:**
+![Disk Usage Alert](../../assets/disk_usage_alert.png)
+
+**HTTP error alert:**
+![HTTP Error Alert](../../assets/http_error_alert.png)
+
+**p90 latency alert:**
+![p90 Latency Alert](../../assets/p90_latency_alert.png)
+
+**p95 latency alert:**   
+![p95 Latency Alert](../../assets/p95_latency_alert.png)
+
+**p99 latency alert:**  
+![p99 Latency Alert](../../assets/p99_latency_alert.png)
+
+**Demo NoData alert:**  
+![Demo NoData Alert](../../assets/demo_nodata_alert.png)
 
 ## Verification
 
