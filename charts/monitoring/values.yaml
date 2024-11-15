@@ -45,7 +45,7 @@ loki-stack:
       logLevel: info
       serverPort: 3101
       clients:
-        - url: http://observability-loki:3100/loki/api/v1/push
+        - url: http://<loki-service-name>:3100/loki/api/v1/push
 
 kube-prometheus-stack:
   enabled: true
@@ -97,20 +97,20 @@ kube-prometheus-stack:
             module: [http_2xx]  # Look for a HTTP 200 response.
           static_configs:
             - targets:
-              - 'http://student-crud-api-api.student-api.svc.cluster.local:3000/api/v1/health'
+              - 'http://<student-api-service-name>:3000/api/v1/health'  # Kubernetes DNS name for your service
           relabel_configs:
             - source_labels: [__address__]
               target_label: __param_target
             - source_labels: [__param_target]
               target_label: instance
             - target_label: __address__
-              replacement: "observability-prometheus-blackbox-exporter:9115"  # Blackbox exporter's address
+              replacement: "<blackbox-exporter-service-name>:9115"  # Blackbox exporter's address
         - job_name: 'app-metrics'
           metrics_path: /metrics
           scrape_interval: 15s
           static_configs:
             - targets:
-              - 'student-crud-api-api.student-api.svc.cluster.local:3000'  # Kubernetes DNS name for your service
+              - '<student-api-service-name>:3000'  # Kubernetes DNS name for your service
           relabel_configs:
             - source_labels: [__address__]
               target_label: instance

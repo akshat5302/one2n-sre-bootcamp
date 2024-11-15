@@ -5,7 +5,7 @@ dockerRegistry:
   password: ''
 ingress:
   enabled: true
-  appHost: student-api.example.com
+  appHost: "" # student-api.example.com
   ingressClass: nginx
   clientMaxBodySize: 5m
 api:
@@ -40,9 +40,6 @@ postgres:
       operator: "Equal"
       value: "database"
       effect: "NoSchedule"
-  pgUser: postgres
-  pgPassword: postgres
-  pgDb: postgres
 externalSecret:
   enabled: true
   refreshInterval: "1h"
@@ -69,7 +66,7 @@ externalSecret:
 vault_setup:
   secretStore:
     name: vault-backend
-  server: "http://vault-setup.vault.svc.cluster.local:8200"
+  server: "http://<vault-setup-service>.<vault-namespace>.svc.cluster.local:8200"
   path: "kv"
   version: "v2"
   auth:
