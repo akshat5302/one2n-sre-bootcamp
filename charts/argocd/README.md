@@ -46,8 +46,8 @@ argo-cd:
 ### 3. Install ArgoCD
 
 ```bash
-helm upgrade --install argocd argocd/ \
-  --values argocd/values.yaml \
+helm upgrade --install argocd . \
+  --values values.yaml \
   --namespace argocd --create-namespace
 ```
 
