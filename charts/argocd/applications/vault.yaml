@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/akshat5302/one2n-sre-bootcamp.git
-    targetRevision: {{path.revision}}
+    targetRevision: HEAD
     path: charts/vault
     helm:
       valueFiles:

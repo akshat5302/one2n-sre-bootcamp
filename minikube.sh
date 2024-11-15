@@ -4,7 +4,7 @@
 PROFILE_NAME="one2n-task"
 
 # Start Minikube with 4 nodes, each with 2GB RAM, using the specified profile
-minikube start --nodes 4 -p $PROFILE_NAME --memory 3072
+minikube start --nodes 4 -p $PROFILE_NAME --memory 2048 --cpus 4
 
 # Wait for nodes to be ready
 echo "Waiting for nodes to be ready..."
